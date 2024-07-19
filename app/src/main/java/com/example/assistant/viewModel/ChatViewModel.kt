@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.assistant.data.Message
+import com.example.assistant.data.Sender
 import com.example.assistant.repositories.ChatRepository
 import com.example.assistant.repositories.GeminiModelRepository
 import com.example.assistant.repositories.LocalChatRepository
@@ -23,7 +24,7 @@ class ChatViewModel(
 
     suspend fun addMessage(message: Message) {
         chatRepository.addMessage(message)
-        if(message.user) {
+        if(message.user == Sender.USER) {
             chatResponse(message)
         }
     }

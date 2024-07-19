@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.sp
 fun ChatBubble(message: String = "",
                color: Color = Color.LightGray,
                textColor: Color = Color.Black,
-               maxWidth: Dp = 300.dp){
+               maxWidth: Dp = 300.dp,
+               textAlign: TextAlign = TextAlign.Start){
 
     val cornerRadius = 25.dp
     val padding = PaddingValues(15.dp, 10.dp)
@@ -46,7 +47,7 @@ fun ChatBubble(message: String = "",
                         .widthIn(0.dp, maxWidth),
             text = message,
             color = textColor,
-            textAlign = TextAlign.Start,
+            textAlign = textAlign,
             fontSize = 18.sp
         )
     }
