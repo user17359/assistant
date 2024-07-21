@@ -1,8 +1,6 @@
 package com.example.assistant.viewModel
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.assistant.data.Message
 import com.example.assistant.data.Sender
@@ -16,14 +14,15 @@ class ChatViewModel(
     private val modelRepository: ModelRepository = GeminiModelRepository()
 ): ViewModel() {
 
-    private val _conversationHistory: MutableState<List<Message>> = mutableStateOf(
-        listOf()
-    )
+    val conversationHistory = MutableLiveData<List<Message>>()
 
-    val conversationHistory: State<List<Message>> = _conversationHistory
+    init {
+        conversationHistory.value = listOf()
+    }
 
     suspend fun addMessage(message: Message) {
         chatRepository.addMessage(message)
+        loadHistory()
         if(message.user == Sender.USER) {
             chatResponse(message)
         }
@@ -34,7 +33,7 @@ class ChatViewModel(
         addMessage(response)
     }
 
-    suspend fun retrieveHistory() {
-        _conversationHistory.value = chatRepository.getMessageHistory()
+    suspend fun loadHistory() {
+        conversationHistory.postValue(chatRepository.getMessageHistory())
     }
 }

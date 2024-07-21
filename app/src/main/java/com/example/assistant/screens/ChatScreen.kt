@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,11 +27,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -49,24 +51,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun ChatScreen(chatViewModel: ChatViewModel){
 
     val coroutineScope = rememberCoroutineScope()
 
+    var last: Sender? = null
+    var text by remember { mutableStateOf("") }
+    val listState = rememberLazyListState()
+
+    val messageHistory = chatViewModel.conversationHistory.observeAsState()
+
     LaunchedEffect(true){
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
-                chatViewModel.retrieveHistory()
+                chatViewModel.loadHistory()
             }
         }
     }
-    
-    var last: Sender? = null
-    var text by remember { mutableStateOf("") }
-
-    val messageHistory by chatViewModel.conversationHistory
 
     Scaffold(
         topBar = {TopAppBar(
@@ -77,24 +80,25 @@ fun ChatScreen(chatViewModel: ChatViewModel){
             title = {
                 Text("Konwersacja")
             }
-        )}
+        )
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
         ){
-            Column {
+            Column() {
                 LazyColumn(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxSize()
-                        .imePadding()
                         .padding(top = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(5.dp),
-                    reverseLayout = true
+                    reverseLayout = true,
+                    state = listState
                 ) {
-                    items(messageHistory) { message ->
+                    items(messageHistory.value ?: listOf()) { message ->
                         if (last != null && last != message.user) {
                             Spacer(modifier = Modifier.height(15.dp))
                         }

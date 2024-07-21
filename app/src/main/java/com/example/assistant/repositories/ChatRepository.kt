@@ -12,7 +12,7 @@ class LocalChatRepository : ChatRepository {
     private val history: MutableList<Message> = mockData.toMutableList()
 
     override suspend fun getMessageHistory() : List<Message> {
-        return history
+        return history.map { it.copy() }
     }
 
     override suspend fun addMessage(message: Message) {
