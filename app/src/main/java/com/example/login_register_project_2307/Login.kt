@@ -1,5 +1,6 @@
 package com.example.login_register_project_2307
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -20,13 +21,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.login_register_project_2307.ui.theme.Login_register_project_2307Theme
+import com.example.login_register_project_2307.ui.theme.Notification
+//import com.example.login_register_project_2307.ui.theme.MainViewModel
 import com.example.login_register_project_2307.ui.theme.Screen
 
+
 @Composable
-fun Login(navController: NavController) {
+fun Login(navController: NavController, context: Context) {
+    val service = Notification(context)
     var log_emailaddress by rememberSaveable { mutableStateOf("") }
     var log_password by rememberSaveable { mutableStateOf("") }
     val emailadress="mateo.goc@onet.eu"
@@ -54,15 +60,15 @@ fun Login(navController: NavController) {
             Screen.Login.route) }else{navController.popBackStack()}}) {
             Text("Zaloguj")
         }
-        Button(onClick = { navController.popBackStack() }) {
+        Button(onClick = { } ) {
             Text("Zarejestruj się")
-        }
+        }//MainViewModel::showSimpleNotification
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview() {
-    Login_register_project_2307Theme {
-        Login(navController = rememberNavController())
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginPreview() {
+//    Login_register_project_2307Theme {
+//        Login(navController = rememberNavController())
+//    }
+//}

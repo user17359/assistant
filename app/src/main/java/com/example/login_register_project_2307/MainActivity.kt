@@ -1,37 +1,18 @@
 package com.example.login_register_project_2307
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.login_register_project_2307.ui.theme.Login_register_project_2307Theme
+import com.example.login_register_project_2307.ui.theme.Notification
+import com.example.login_register_project_2307.ui.theme.NotificationReceiver
 import com.example.login_register_project_2307.ui.theme.SetupNavGraph
 
 
@@ -41,14 +22,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Login_register_project_2307Theme {
-                navController= rememberNavController()
-
-                // A surface container using the 'background' color from the theme
+                navController = rememberNavController()
+                val context: Context = this
+                val notification = Notification(context)
+                notification.scheduleNotification(18, 27, "Powiadomienie", "Wstaw zdjęcie śniadania", 0)
+                notification.scheduleNotification(18, 28, "Powiadomienie", "Wstaw zdjęcie obiadu", 1)
+                notification.scheduleNotification(18, 12, "Powiadomienie", "Wstaw zdjęcie kolacji", 2)
+                notification.scheduleNotification(18, 13, "Powiadomienie", "Czy często wykonujesz dodatkowe aktywności?", 3)
+                notification.scheduleNotification(18, 14, "Powiadomienie", "Jak często wykonujesz dodatkowe aktywności?", 4)
+                notification.scheduleNotification(18, 15, "Powiadomienie", "Podaj wzrost", 5)
+                notification.scheduleNotification(18, 16, "Powiadomienie", "Podaj wagę", 6)
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SetupNavGraph(navController = navController)
+                    SetupNavGraph(navController = navController, context)
                 }
             }
         }
