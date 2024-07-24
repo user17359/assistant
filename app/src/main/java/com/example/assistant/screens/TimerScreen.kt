@@ -22,11 +22,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.assistant.AssistantScreen
 import com.example.assistant.elements.Timer
+import com.example.assistant.viewModel.AchievementViewModel
 import com.example.assistant.viewModel.ExerciseViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun TimeScreen(navController: NavController, viewModel: ExerciseViewModel, exerciseID: Int){
+fun TimeScreen(navController: NavController, viewModel: ExerciseViewModel, achievementViewModel: AchievementViewModel, exerciseID: Int){
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -38,15 +39,17 @@ fun TimeScreen(navController: NavController, viewModel: ExerciseViewModel, exerc
 
     val finishedExercise by viewModel.finishedExercise.collectAsState()
 
+    val exercise = viewModel.currentExercise.observeAsState()
+    val currentTime = viewModel.currentTime.observeAsState()
+
     LaunchedEffect(finishedExercise){
         if(finishedExercise){
+            achievementViewModel.advanceAchievement(1, exercise.value!!.durationSeconds.toFloat() / 60f)
             navController.navigate(AssistantScreen.ExerciseScreen.name)
             viewModel.resetComplete()
         }
     }
 
-    val exercise = viewModel.currentExercise.observeAsState()
-    val currentTime = viewModel.currentTime.observeAsState()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -63,5 +66,5 @@ fun TimeScreen(navController: NavController, viewModel: ExerciseViewModel, exerc
 @Preview
 @Composable
 fun TimeScreenPreview(){
-    TimeScreen(rememberNavController(), viewModel(), 1)
+    TimeScreen(rememberNavController(), viewModel(), viewModel(),1)
 }

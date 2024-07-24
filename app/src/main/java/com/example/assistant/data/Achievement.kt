@@ -36,11 +36,14 @@ class Achievement (
     private val requirements: Map<Tier, Int>,
     var requiredNumber: Int = requirements[GetNextTier(tier)]!!
 ){
-    fun advanceAchievement(value: Float){
+    fun advanceAchievement(value: Float) : Boolean{
+        var advanced = false
         currentNumber += value
-        while(currentNumber > requiredNumber) {
+        while(currentNumber >= requiredNumber) {
             tier = GetNextTier(tier)
-            requiredNumber = requirements[tier]!!
+            requiredNumber = requirements[GetNextTier(tier)]!!
+            advanced = true
         }
+        return advanced
     }
 }

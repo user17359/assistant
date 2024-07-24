@@ -18,7 +18,7 @@ val setOfAchievements: Set<Achievement> = setOf(
         name = "xyz",
         description = "Wykonuj ćwiczenia przez %d minut/y",
         requirements = mapOf(
-            Tier.Bronze to 2,
+            Tier.Bronze to 1,
             Tier.Silver to 30,
             Tier.Gold to 240,
             Tier.Diamond to 720

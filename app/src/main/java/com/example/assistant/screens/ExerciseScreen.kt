@@ -10,12 +10,16 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.assistant.AssistantScreen
 import com.example.assistant.elements.BottomNavBar
 import com.example.assistant.elements.ExerciseCard
+import com.example.assistant.viewModel.AchievementViewModel
 import com.example.assistant.viewModel.ExerciseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +38,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseScreen(navController: NavController, viewModel: ExerciseViewModel) {
+fun ExerciseScreen(navController: NavController, viewModel: ExerciseViewModel, achievementViewModel: AchievementViewModel) {
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -45,9 +50,20 @@ fun ExerciseScreen(navController: NavController, viewModel: ExerciseViewModel) {
         }
     }
 
+    val snackbarContent = achievementViewModel.snackBarContent.observeAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(snackbarContent){
+        if(snackbarContent.value != ""){
+            snackbarHostState.showSnackbar(message = snackbarContent.value!!, duration = SnackbarDuration.Short)
+            achievementViewModel.resetSnackbar()
+        }
+    }
+
     val exercisePlan = viewModel.exercisePlan.observeAsState()
 
     Scaffold (
+        snackbarHost = {SnackbarHost(hostState = snackbarHostState)},
         topBar = {
             TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
@@ -96,5 +112,5 @@ suspend fun OnCardClick(navController: NavController, viewModel: ExerciseViewMod
 @Composable
 fun ExerciseScreenPreview()
 {
-    ExerciseScreen(navController = rememberNavController(), viewModel())
+    ExerciseScreen(navController = rememberNavController(), viewModel(), viewModel())
 }
