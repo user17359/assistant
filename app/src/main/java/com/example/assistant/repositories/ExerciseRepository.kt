@@ -1,7 +1,7 @@
 package com.example.assistant.repositories
 
 import com.example.assistant.data.Exercise
-import com.example.assistant.data.setOfExercises
+import com.example.assistant.data.presets.setOfExercises
 
 interface ExerciseRepository {
     suspend fun getExercises(): List<Exercise>

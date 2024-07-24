@@ -1,6 +1,7 @@
-package com.example.assistant.data
+package com.example.assistant.data.presets
 
 import com.example.assistant.R
+import com.example.assistant.data.Exercise
 
 val setOfExercises = listOf(
     Exercise(0, R.drawable.brzuszki, "Brzuszki", 30),

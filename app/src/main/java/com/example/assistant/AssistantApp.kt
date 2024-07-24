@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.assistant.screens.ChatScreen
 import com.example.assistant.screens.ExerciseScreen
+import com.example.assistant.screens.ProfileScreen
 import com.example.assistant.screens.TimeScreen
 import com.example.assistant.viewModel.ChatViewModel
 import com.example.assistant.viewModel.ExerciseViewModel
@@ -41,7 +42,7 @@ fun AssistantApp (
             TimeScreen(navController = navController, exerciseViewModel, backStackEntry.arguments?.getString("exerciseId")!!.toInt())
         }
         composable(AssistantScreen.ProfileScreen.name) {
-            ChatScreen(chatViewModel = chatViewModel, navController = navController)
+            ProfileScreen(navController = navController)
         }
         composable(AssistantScreen.AwardsScreen.name) {
             ChatScreen(chatViewModel = chatViewModel, navController = navController)

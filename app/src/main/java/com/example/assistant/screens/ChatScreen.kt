@@ -1,5 +1,6 @@
 package com.example.assistant.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -140,9 +141,16 @@ fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 15.dp),
-                                    horizontalArrangement = Arrangement.Start
+                                        .padding(start = 10.dp),
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.Bottom
                                 ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.chatbot),
+                                        contentDescription = null,
+                                        modifier = Modifier.height(48.dp)
+                                            .padding(end = 12.dp)
+                                    )
                                     ChatBubble(
                                         message.content,
                                         color = Color.LightGray,
