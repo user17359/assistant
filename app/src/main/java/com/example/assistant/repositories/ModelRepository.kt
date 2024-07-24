@@ -1,6 +1,5 @@
 package com.example.assistant.repositories
 
-import android.util.Log
 import com.example.assistant.BuildConfig
 import com.example.assistant.data.Message
 import com.example.assistant.data.Sender
@@ -39,7 +38,6 @@ class GeminiModelRepository : ModelRepository {
     }
 
     override suspend fun generateResponse(message: Message): Message {
-        Log.i("miau", "generating response...")
         val response = client.post(BuildConfig.GEMINI_URL){
             headers {
                append(HttpHeaders.ContentType, "application/json")
@@ -101,7 +99,7 @@ class GeminiModelRepository : ModelRepository {
             return Message(stringResponse.dropLast(1), Sender.MODEL)
         }
         else{
-            return Message("Błąd " + response.status.toString() + " Gemini", Sender.MODEL)
+            return Message("Błąd Gemini" + response.status.toString() , Sender.MODEL)
         }
     }
 }

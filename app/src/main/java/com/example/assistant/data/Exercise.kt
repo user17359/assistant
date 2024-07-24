@@ -1,8 +1,9 @@
 package com.example.assistant.data
 
 data class Exercise(
+    val id: Int,
     val image: Int,
     val name: String,
     val durationSeconds: Int,
-    val status: Boolean = false
+    var status: Boolean = false
 )

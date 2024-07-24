@@ -56,7 +56,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ChatScreen(chatViewModel: ChatViewModel, navController: NavController){
+fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -198,5 +198,5 @@ fun ChatScreen(chatViewModel: ChatViewModel, navController: NavController){
 @Composable
 fun PreviewChatScreen()
 {
-    ChatScreen(viewModel(), rememberNavController())
+    ChatScreen(rememberNavController(), viewModel())
 }

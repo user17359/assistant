@@ -24,12 +24,11 @@ import com.example.assistant.R
 import com.example.assistant.data.Exercise
 
 @Composable
-fun ExerciseCard(exercise: Exercise) {
+fun ExerciseCard(exercise: Exercise, onClick: () -> Unit = {}) {
     ElevatedCard(
-        modifier = Modifier.aspectRatio(0.8f).
-        clickable {
-
-        },
+        modifier = Modifier
+            .aspectRatio(0.8f)
+            .clickable {onClick()},
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary
         )
@@ -38,7 +37,7 @@ fun ExerciseCard(exercise: Exercise) {
         Box(
             modifier = Modifier.weight(1f),
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Image(
                 painter = painterResource(id = exercise.image),
                 contentDescription = exercise.name,
@@ -48,7 +47,7 @@ fun ExerciseCard(exercise: Exercise) {
                     ),
                 contentScale = ContentScale.Crop
             )
-            if(exercise.status) {
+            if (exercise.status) {
                 Image(
                     painter = painterResource(id = R.drawable.check),
                     contentDescription = "Zrobione"
@@ -76,5 +75,5 @@ fun ExerciseCard(exercise: Exercise) {
 @Preview
 @Composable
 fun ExerciseCardPreview() {
-    ExerciseCard(Exercise(R.drawable.brzuszki, "Brzuszki", 30, true))
+    ExerciseCard(Exercise(0, R.drawable.brzuszki, "Brzuszki", 30, true), {})
 }
