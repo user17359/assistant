@@ -1,7 +1,7 @@
 package com.example.assistant.repositories
 
 import com.example.assistant.data.Message
-import com.example.assistant.data.mockData
+import com.example.assistant.data.presets.mockData
 
 interface ChatRepository {
     suspend fun getMessageHistory(): List<Message>

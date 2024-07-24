@@ -1,5 +1,6 @@
 package com.example.assistant.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,9 +43,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.assistant.R
 import com.example.assistant.data.Message
 import com.example.assistant.data.Sender
+import com.example.assistant.elements.BottomNavBar
 import com.example.assistant.elements.ChatBubble
 import com.example.assistant.viewModel.ChatViewModel
 import kotlinx.coroutines.Dispatchers
@@ -53,7 +57,7 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ChatScreen(chatViewModel: ChatViewModel){
+fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -81,7 +85,8 @@ fun ChatScreen(chatViewModel: ChatViewModel){
                 Text("Konwersacja")
             }
         )
-        }
+        },
+        bottomBar = { BottomNavBar(selected = 2, navController) }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -136,9 +141,16 @@ fun ChatScreen(chatViewModel: ChatViewModel){
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 15.dp),
-                                    horizontalArrangement = Arrangement.Start
+                                        .padding(start = 10.dp),
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.Bottom
                                 ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.chatbot),
+                                        contentDescription = null,
+                                        modifier = Modifier.height(48.dp)
+                                            .padding(end = 12.dp)
+                                    )
                                     ChatBubble(
                                         message.content,
                                         color = Color.LightGray,
@@ -194,5 +206,5 @@ fun ChatScreen(chatViewModel: ChatViewModel){
 @Composable
 fun PreviewChatScreen()
 {
-    ChatScreen(viewModel())
+    ChatScreen(rememberNavController(), viewModel())
 }

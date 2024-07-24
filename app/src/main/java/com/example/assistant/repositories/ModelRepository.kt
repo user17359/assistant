@@ -1,6 +1,5 @@
 package com.example.assistant.repositories
 
-import android.util.Log
 import com.example.assistant.BuildConfig
 import com.example.assistant.data.Message
 import com.example.assistant.data.Sender
@@ -8,6 +7,7 @@ import com.example.assistant.json.GeminiResponseSerializable
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.network.sockets.ConnectTimeoutException
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
@@ -39,7 +39,6 @@ class GeminiModelRepository : ModelRepository {
     }
 
     override suspend fun generateResponse(message: Message): Message {
-        Log.i("miau", "generating response...")
         val response = client.post(BuildConfig.GEMINI_URL){
             headers {
                append(HttpHeaders.ContentType, "application/json")
@@ -90,18 +89,22 @@ class GeminiModelRepository : ModelRepository {
             )
         }
 
-        if(response.status == HttpStatusCode.OK) {
-            val geminiResponse: List<GeminiResponseSerializable> = response.body()
+        try {
+            return if (response.status == HttpStatusCode.OK) {
+                val geminiResponse: List<GeminiResponseSerializable> = response.body()
 
-            var stringResponse = ""
+                var stringResponse = ""
 
-            for (r in geminiResponse)
-                stringResponse += r.candidates[0].content.parts[0].text
+                for (r in geminiResponse)
+                    stringResponse += r.candidates[0].content.parts[0].text
 
-            return Message(stringResponse.dropLast(1), Sender.MODEL)
+                Message(stringResponse.dropLast(1), Sender.MODEL)
+            } else {
+                Message("Błąd Gemini: " + response.status.toString(), Sender.MODEL)
+            }
         }
-        else{
-            return Message("Błąd " + response.status.toString() + " Gemini", Sender.MODEL)
+        catch (e: ConnectTimeoutException){
+            return Message("Błąd Gemini: " + "Timeout", Sender.MODEL)
         }
     }
 }
