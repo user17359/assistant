@@ -1,5 +1,6 @@
 package com.example.assistant.elements
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,8 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -29,27 +30,41 @@ fun ChatBubble(message: String = "",
                color: Color = Color.LightGray,
                textColor: Color = Color.Black,
                maxWidth: Dp = 300.dp,
-               textAlign: TextAlign = TextAlign.Start){
+               textAlign: TextAlign = TextAlign.Start,
+               modifier: Modifier = Modifier,
+               imageId: Int? = null){
 
     val cornerRadius = 25.dp
     val padding = PaddingValues(15.dp, 10.dp)
 
     Box(
-        modifier = Modifier
-            .wrapContentSize()
-            .clip(shape = RoundedCornerShape(cornerRadius))
-            .background(color = color)
+        modifier = modifier
+    ) {
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .clip(shape = RoundedCornerShape(cornerRadius))
+                .background(color = color)
 
-    ){
-        Text(
-            modifier = Modifier.
-                        padding(padding)
-                        .widthIn(0.dp, maxWidth),
-            text = message,
-            color = textColor,
-            textAlign = textAlign,
-            fontSize = 18.sp
-        )
+        ) {
+            if(imageId == null)
+            Text(
+                modifier = Modifier
+                    .padding(padding)
+                    .widthIn(0.dp, maxWidth),
+                text = message,
+                color = textColor,
+                textAlign = textAlign,
+                fontSize = 18.sp
+            )
+            else{
+                Image(
+                    modifier = Modifier.padding(padding),
+                    painter = painterResource(id = imageId),
+                    contentDescription = "aaa"
+                )
+            }
+        }
     }
 }
 

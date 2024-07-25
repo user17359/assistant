@@ -2,6 +2,7 @@ package com.example.assistant.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,16 +49,19 @@ import androidx.navigation.compose.rememberNavController
 import com.example.assistant.R
 import com.example.assistant.data.Message
 import com.example.assistant.data.Sender
+import com.example.assistant.data.presets.testIntervention
 import com.example.assistant.elements.BottomNavBar
 import com.example.assistant.elements.ChatBubble
 import com.example.assistant.viewModel.ChatViewModel
+import com.example.assistant.viewModel.InputMode
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
+fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel) {
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -66,33 +70,31 @@ fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
     val listState = rememberLazyListState()
 
     val messageHistory = chatViewModel.conversationHistory.observeAsState()
+    val inputMode = chatViewModel.inputMode.observeAsState()
 
-    LaunchedEffect(true){
+    LaunchedEffect(true) {
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
                 chatViewModel.loadHistory()
+                delay(5000)
+                chatViewModel.interventionExecute(testIntervention)
             }
         }
     }
 
-    Scaffold(
-        topBar = {TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Text("Konwersacja")
-            }
-        )
-        },
-        bottomBar = { BottomNavBar(selected = 2, navController) }
-    ) { innerPadding ->
+    Scaffold(topBar = {
+        TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ), title = {
+            Text("Konwersacja")
+        })
+    }, bottomBar = { BottomNavBar(selected = 2, navController) }) { innerPadding ->
         Box(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-        ){
+        ) {
             Column() {
                 LazyColumn(
                     modifier = Modifier
@@ -104,24 +106,24 @@ fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
                     state = listState
                 ) {
                     items(messageHistory.value ?: listOf()) { message ->
-                        if (last != null && last != message.user) {
+                        if (last != null && (last != message.user && !(last == Sender.USER && message.user == Sender.FAKEUSER) && !(last == Sender.FAKEUSER && message.user == Sender.USER))) {
                             Spacer(modifier = Modifier.height(15.dp))
                         }
                         when (message.user) {
-                            Sender.USER -> {
+                            Sender.USER, Sender.FAKEUSER -> {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(end = 15.dp),
+                                        .padding(end = 15.dp, start = 15.dp),
                                     horizontalArrangement = Arrangement.End
                                 ) {
                                     ChatBubble(
-                                        message.content,
-                                        color = Color.Blue,
-                                        textColor = Color.White
+                                        message.content, color = Color.Blue, textColor = Color.White,
+                                        imageId = message.image
                                     )
                                 }
                             }
+
                             Sender.SYSTEM -> {
                                 Row(
                                     modifier = Modifier
@@ -133,10 +135,12 @@ fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
                                         message.content,
                                         color = Color.LightGray,
                                         textColor = Color.Black,
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        imageId = message.image
                                     )
                                 }
                             }
+
                             else -> {
                                 Row(
                                     modifier = Modifier
@@ -148,13 +152,15 @@ fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
                                     Image(
                                         painter = painterResource(id = R.drawable.chatbot),
                                         contentDescription = null,
-                                        modifier = Modifier.height(48.dp)
+                                        modifier = Modifier
+                                            .height(48.dp)
                                             .padding(end = 12.dp)
                                     )
                                     ChatBubble(
                                         message.content,
                                         color = Color.LightGray,
-                                        textColor = Color.Black
+                                        textColor = Color.Black,
+                                        imageId = message.image
                                     )
                                 }
                             }
@@ -162,39 +168,82 @@ fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
                         last = message.user
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .padding(top = 15.dp)
-                        .height(80.dp)
-                        .background(MaterialTheme.colorScheme.primaryContainer),
-                    verticalAlignment = Alignment.CenterVertically,
-                ){
-                    TextField(
+                if (inputMode.value == InputMode.TwoButtons) {
+                    Row(
                         modifier = Modifier
-                            .padding(start = 15.dp, end = 15.dp, top = 15.dp, bottom = 15.dp)
+                            .wrapContentHeight()
+                            .fillMaxWidth()
+                            .padding(top = 15.dp)
+                            .height(80.dp)
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        ChatBubble(chatViewModel.firstButtonContent,
+                            color = MaterialTheme.colorScheme.primary,
+                            textColor = Color.White,
+                            modifier = Modifier
+                                .clickable {
+                                    coroutineScope.launch {
+                                        chatViewModel.firstButton()
+                                    }
+                                }
+                                .padding(end = 12.dp))
+
+                        ChatBubble(chatViewModel.secondButtonContent,
+                            color = MaterialTheme.colorScheme.primary,
+                            textColor = Color.White,
+                            modifier = Modifier.clickable {
+                                coroutineScope.launch {
+                                    chatViewModel.secondButton()
+                                }
+                            })
+                    }
+                } else if (inputMode.value == InputMode.Keyboard) {
+                    Row(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .padding(top = 15.dp)
+                            .height(80.dp)
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TextField(modifier = Modifier
+                            .padding(
+                                start = 15.dp, end = 15.dp, top = 15.dp, bottom = 15.dp
+                            )
                             .fillMaxWidth()
                             .weight(1f)
                             .clip(shape = RoundedCornerShape(30.dp)),
-                        value = text,
-                        onValueChange = {text = it}
-                    )
-                    IconButton(
-                        modifier = Modifier.padding(end = 15.dp),
-                        enabled = (text != ""),
-                        onClick = {
-                            coroutineScope.launch {
-                                val sendText = text
-                                text = ""
-                                chatViewModel.addMessage(Message(sendText, Sender.USER))
-                            }
+                            value = text,
+                            onValueChange = { text = it })
+                        IconButton(modifier = Modifier.padding(end = 15.dp),
+                            enabled = (text != ""),
+                            onClick = {
+                                coroutineScope.launch {
+                                    val sendText = text
+                                    text = ""
+                                    chatViewModel.addMessage(Message(sendText, Sender.USER))
+                                }
+                            }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.baseline_send_24),
+                                contentDescription = "Send button",
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         }
+                    }
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .fillMaxWidth()
+                            .padding(top = 15.dp)
+                            .height(80.dp)
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.baseline_send_24),
-                            contentDescription = "Send button",
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
+
                     }
                 }
             }
@@ -204,7 +253,6 @@ fun ChatScreen(navController: NavController, chatViewModel: ChatViewModel){
 
 @Preview
 @Composable
-fun PreviewChatScreen()
-{
+fun PreviewChatScreen() {
     ChatScreen(rememberNavController(), viewModel())
 }

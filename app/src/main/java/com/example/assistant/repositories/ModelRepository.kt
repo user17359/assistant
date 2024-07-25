@@ -21,6 +21,7 @@ import io.ktor.serialization.kotlinx.json.json
 
 interface ModelRepository {
     suspend fun generateResponse(message: Message): Message
+    suspend fun generatePhotoDescription(): Message
 }
 
 class GeminiModelRepository : ModelRepository {
@@ -99,6 +100,50 @@ class GeminiModelRepository : ModelRepository {
                     stringResponse += r.candidates[0].content.parts[0].text
 
                 Message(stringResponse.dropLast(1), Sender.MODEL)
+            } else {
+                Message("Błąd Gemini: " + response.status.toString(), Sender.MODEL)
+            }
+        }
+        catch (e: ConnectTimeoutException){
+            return Message("Błąd Gemini: " + "Timeout", Sender.MODEL)
+        }
+    }
+
+    override suspend fun generatePhotoDescription(): Message {
+        val response = client.post(BuildConfig.GEMINI_URL){
+            headers {
+                append(HttpHeaders.ContentType, "application/json")
+            }
+            setBody(
+                "{\n" +
+                        "  \"contents\": {\n" +
+                        "    \"role\": \"user\",\n" +
+                        "    \"parts\": [\n" +
+                        "      {\n" +
+                        "      \"fileData\": {\n" +
+                        "        \"mimeType\": \"image/jpeg\",\n" +
+                        "        \"fileUri\": \"gs://generativeai-downloads/images/scones.jpg\"\n" +
+                        "        }\n" +
+                        "      },\n" +
+                        "      {\n" +
+                        "        \"text\": \"Napisz krótko co jest na tym zdjęciu, wymień tylko jedzenie\"\n" +
+                        "      }\n" +
+                        "    ]\n" +
+                        "  }\n" +
+                        "}"
+            )
+        }
+
+        try {
+            return if (response.status == HttpStatusCode.OK) {
+                val geminiResponse: List<GeminiResponseSerializable> = response.body()
+
+                var stringResponse = ""
+
+                for (r in geminiResponse)
+                    stringResponse += r.candidates[0].content.parts[0].text
+
+                Message(stringResponse.dropLast(1) + "Zapisuje to!", Sender.MODEL)
             } else {
                 Message("Błąd Gemini: " + response.status.toString(), Sender.MODEL)
             }
