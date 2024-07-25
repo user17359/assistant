@@ -11,7 +11,7 @@ import com.example.assistant.data.interventionElements.Stop
 
 
 val testIntervention: InterventionElement = SendMessage(
-    Message("Czy mógłbyś mi wysłać zdjęcie swojego obiadu?", Sender.MODEL),
+    Message("Czy mógłbyś mi wysłać zdjęcie swojego śniadania?", Sender.MODEL),
     GiveDecisions(
         listOf(
             InterventionOption(

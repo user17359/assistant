@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.assistant.screens.ChatScreen
 import com.example.assistant.screens.ExerciseScreen
 import com.example.assistant.screens.ProfileScreen
+import com.example.assistant.screens.QuizScreen
 import com.example.assistant.screens.TimeScreen
 import com.example.assistant.viewModel.AchievementViewModel
 import com.example.assistant.viewModel.ChatViewModel
@@ -19,7 +20,6 @@ enum class AssistantScreen {
     ExerciseScreen,
     TimerScreen,
     ProfileScreen,
-    AwardsScreen,
     CalendarScreen,
     GameScreen
 }
@@ -46,14 +46,11 @@ fun AssistantApp (
         composable(AssistantScreen.ProfileScreen.name) {
             ProfileScreen(navController = navController, achievementViewModel)
         }
-        composable(AssistantScreen.AwardsScreen.name) {
-            ChatScreen(chatViewModel = chatViewModel, navController = navController)
-        }
         composable(AssistantScreen.CalendarScreen.name) {
             ChatScreen(chatViewModel = chatViewModel, navController = navController)
         }
         composable(AssistantScreen.GameScreen.name) {
-            ChatScreen(chatViewModel = chatViewModel, navController = navController)
+            QuizScreen(navController = navController)
         }
     }
 }

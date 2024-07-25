@@ -31,7 +31,7 @@ class ExerciseViewModel(
     }
 
     suspend fun startupTimer(id: Int) {
-        delay(500)
+        delay(1000)
 
         timer = object: CountDownTimer((currentExercise.value!!.durationSeconds * 1000).toLong(), 20) {
             override fun onTick(millisUntilFinished: Long) { currentTime.postValue(millisUntilFinished.toFloat()/1000.0f)}

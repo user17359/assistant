@@ -6,7 +6,6 @@ import com.example.assistant.data.InterventionElement
 import com.example.assistant.data.Message
 import com.example.assistant.data.Sender
 import com.example.assistant.data.interventionElements.InterventionOption
-import com.example.assistant.data.interventionElements.Start
 import com.example.assistant.repositories.ChatRepository
 import com.example.assistant.repositories.GeminiModelRepository
 import com.example.assistant.repositories.LocalChatRepository
@@ -59,8 +58,8 @@ class ChatViewModel(
     }
 
     suspend fun interventionExecute(interventionScheme: InterventionElement) {
-        inputMode.postValue(InputMode.Off)
-        Start(interventionScheme).execute(this)
+        //inputMode.postValue(InputMode.Off)
+        //Start(interventionScheme).execute(this)
     }
 
     suspend fun setTwoButtons(options: List<InterventionOption>){

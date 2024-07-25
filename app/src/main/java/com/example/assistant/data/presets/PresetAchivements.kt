@@ -5,7 +5,7 @@ import com.example.assistant.data.Tier
 
 val setOfAchievements: Set<Achievement> = setOf(
     Achievement(
-        name = "xyz",
+        name = "Olimpijczyk",
         description = "Ćwicz przez %d dni",
         requirements = mapOf(
             Tier.Bronze to 7,
@@ -15,7 +15,7 @@ val setOfAchievements: Set<Achievement> = setOf(
         )
     ),
     Achievement(
-        name = "xyz",
+        name = "Czasowy zawodnik",
         description = "Wykonuj ćwiczenia przez %d minut/y",
         requirements = mapOf(
             Tier.Bronze to 1,
@@ -25,7 +25,7 @@ val setOfAchievements: Set<Achievement> = setOf(
         )
     ),
     Achievement(
-        name = "xyz",
+        name = "Owocowy znawca",
         description = "Wykonuj quiz o warzywach i owocach %d razy",
         tier = Tier.Silver,
         currentNumber = 23f,
@@ -37,7 +37,7 @@ val setOfAchievements: Set<Achievement> = setOf(
         )
     ),
     Achievement(
-        name = "xyz",
+        name = "Odżywczy entuzjasta",
         description = "Wykonuj quiz o składnikach odżywczych %d razy",
         tier = Tier.Gold,
         currentNumber = 69f,
@@ -49,7 +49,7 @@ val setOfAchievements: Set<Achievement> = setOf(
         )
     ),
     Achievement(
-        name = "xyz",
+        name = "Żywieniowy specjalista",
         description = "Wykonuj quiz o piramidzie żywieniowej %d razy",
         tier = Tier.Diamond,
         currentNumber = 100f,
@@ -61,7 +61,7 @@ val setOfAchievements: Set<Achievement> = setOf(
         )
     ),
     Achievement(
-        name = "xyz",
+        name = "Kuchenny reporter",
         description = "Wstaw zdjęcie posiłku do chatbota %d razy",
         tier = Tier.Bronze,
         currentNumber = 5f,
@@ -73,7 +73,7 @@ val setOfAchievements: Set<Achievement> = setOf(
         )
     ),
     Achievement(
-        name = "xyz",
+        name = "Świeżak",
         description = "Zmień awatar",
         requirements = mapOf(
             Tier.Bronze to 0,
